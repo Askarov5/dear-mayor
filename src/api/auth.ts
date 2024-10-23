@@ -10,10 +10,11 @@ const getAuthToken = async () => {
   }
 
   try {
-    const response = await fetch('/auth/oauth2/v2.0/token', {
+    const response = await fetch(`${authUrl}/oauth2/v2.0/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        AccessControlAllowOrigin: 'true',
       },
       body: new URLSearchParams({
         grant_type: grant_type as string,
@@ -28,6 +29,7 @@ const getAuthToken = async () => {
     }
 
     const data = await response.json();
+    process.env.AUTH_TOKEN = data.access_token;
     return data.access_token;
   } catch (error) {
     console.error('Error requesting auth token:', error);

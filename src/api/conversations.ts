@@ -1,12 +1,19 @@
-import { IConversation } from '../types/conversationTypes';
+import {
+  IConversation,
+  IConversationRequest,
+} from '../types/conversationTypes';
 
+const token = import.meta.env.VITE_AUTH_TOKEN;
+const apiExtention = import.meta.env.PROD ? '' : '/api';
+
+// get all conversations
 const getAllConversations = async (containerName: string) => {
   try {
     const response = await fetch(
-      `/api/history/list?containerName=${containerName}`,
+      `${apiExtention}/history/list?containerName=${containerName}`,
       {
         headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_AUTH_TOKEN}`,
+          Authorization: `Bearer ${token}`,
         },
       },
     );
@@ -22,16 +29,17 @@ const getAllConversations = async (containerName: string) => {
   }
 };
 
+// get conversation by id
 const getConversation = async (
   id: string,
   containerName: string,
 ): Promise<IConversation> => {
   try {
-    const response = await fetch(`/api/history/read`, {
+    const response = await fetch(`${apiExtention}/history/read`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${import.meta.env.VITE_AUTH_TOKEN}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         containerName: containerName,
@@ -50,17 +58,82 @@ const getConversation = async (
   }
 };
 
-const postMessageFeedback = async (
+// generate messages from model
+export const historyGenerate = async (
+  options: IConversationRequest,
+  abortSignal: AbortSignal,
+  convId?: string,
+): Promise<Response> => {
+  let body;
+  if (convId) {
+    body = JSON.stringify({
+      conversation_id: convId,
+      messages: options.messages,
+      containerName: options.containerName,
+      indexName: options.indexName,
+    });
+  } else {
+    body = JSON.stringify(options);
+  }
+  const response = await fetch(`${apiExtention}/history/generate`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: body,
+    signal: abortSignal,
+  })
+    .then((res) => {
+      return res;
+    })
+    .catch((_err) => {
+      console.error('There was an issue fetching your data.');
+      console.error(_err);
+      return new Response();
+    });
+  return response;
+};
+
+// update messages on database
+export const historyUpdate = async (conversation: IConversation): Promise<Response> => {
+  const response = await fetch(`${apiExtention}/history/update`, {
+    method: 'POST',
+    body: JSON.stringify(conversation),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      'Access-Control-Allow-Origin':'*'
+    },
+  })
+    .then(async (res) => {
+      console.log('sucessfully updated database');
+      return res;
+    })
+    .catch((_err) => {
+      console.error('There was an issue fetching your data.');
+      console.error(_err);
+      const errRes: Response = {
+        ...new Response(),
+        ok: false,
+        status: 500,
+      };
+      return errRes;
+    });
+  return response;
+};
+
+const updateMessageFeedback = async (
   messageId: string,
   feedback: string,
   containerName: string,
 ) => {
   try {
-    const response = await fetch(`/api//history/message_feedback`, {
+    const response = await fetch(`${apiExtention}/history/message_feedback`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${import.meta.env.VITE_AUTH_TOKEN}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         containerName: containerName,
@@ -70,7 +143,7 @@ const postMessageFeedback = async (
     });
 
     if (!response.ok) {
-      throw new Error(`Error posting feedback: ${response.statusText}`);
+      throw new Error(`Error posting feedback: ${response.statusText} \n ${await response.text()}`);
     }
 
     return await response.json();
@@ -80,4 +153,4 @@ const postMessageFeedback = async (
   }
 };
 
-export { getAllConversations, getConversation, postMessageFeedback };
+export { getAllConversations, getConversation, updateMessageFeedback as postMessageFeedback };

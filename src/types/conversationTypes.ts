@@ -75,3 +75,9 @@ export interface IConversation {
   conversation_id: string;
   messages: IChatMessage[];
 }
+
+export interface IConversationRequest {
+  messages: IChatMessage[];
+  containerName?: string;
+  indexName?: string;
+}
