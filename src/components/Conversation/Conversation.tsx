@@ -12,8 +12,8 @@ const Conversation = () => {
     <div className="h-[calc(100dvh-150px)] max-h-full w-full overflow-y-auto md:h-[calc(100dvh-175px)]">
       {messages.length === 0 && (
         <div className="flex flex-col justify-center items-center gap-2.5 w-full h-[calc(100%-20px)] md:h-[calc(100%-50px)]">
-          <DearMayorLogo className="fill-default-txt dark:fill-default-txt-dark" />
-          <p className="font-bold text-xl">
+          <DearMayorLogo className="w-[300px] md:w-full fill-default-txt dark:fill-default-txt-dark " />
+          <p className="font-bold md:text-xl">
             This chat bot lorem ipsum introduction text.
           </p>
         </div>

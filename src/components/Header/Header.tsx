@@ -15,7 +15,7 @@ const Header: React.FC<HeaderProps> = ({
   isSidebarVisible,
 }) => {
   return (
-    <header className="flex justify-between items-center min-w-full gap-3 md:gap-6 py-3 px-5 dark:fill-default-txt-dark dark:text-default-txt-dark">
+    <header className="flex justify-between items-center min-w-full gap-3 md:gap-6 py-3 px-1 md:px-5 dark:fill-default-txt-dark dark:text-default-txt-dark">
       <div className="left flex justify-between items-center gap-2 md:gap-4">
         {!isSidebarVisible && (
           <IconButton
