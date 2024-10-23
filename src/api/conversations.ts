@@ -2,15 +2,14 @@ import {
   IConversation,
   IConversationRequest,
 } from '../types/conversationTypes';
+import { getFullUrl } from '../utils/api';
 
 const token = import.meta.env.VITE_AUTH_TOKEN;
-const apiExtention = import.meta.env.PROD ? '' : '/api';
 
 // get all conversations
 const getAllConversations = async (containerName: string) => {
   try {
-    const response = await fetch(
-      `${apiExtention}/history/list?containerName=${containerName}`,
+    const response = await fetch(getFullUrl(`/history/list?containerName=${containerName}`),
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -35,7 +34,7 @@ const getConversation = async (
   containerName: string,
 ): Promise<IConversation> => {
   try {
-    const response = await fetch(`${apiExtention}/history/read`, {
+    const response = await fetch(getFullUrl(`/history/read`), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -75,7 +74,7 @@ export const historyGenerate = async (
   } else {
     body = JSON.stringify(options);
   }
-  const response = await fetch(`${apiExtention}/history/generate`, {
+  const response = await fetch(getFullUrl(`/history/generate`), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -97,7 +96,7 @@ export const historyGenerate = async (
 
 // update messages on database
 export const historyUpdate = async (conversation: IConversation): Promise<Response> => {
-  const response = await fetch(`${apiExtention}/history/update`, {
+  const response = await fetch(getFullUrl(`/history/update`), {
     method: 'POST',
     body: JSON.stringify(conversation),
     headers: {
@@ -129,7 +128,7 @@ const updateMessageFeedback = async (
   containerName: string,
 ) => {
   try {
-    const response = await fetch(`${apiExtention}/history/message_feedback`, {
+    const response = await fetch(getFullUrl(`/history/message_feedback`), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
