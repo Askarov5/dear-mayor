@@ -5,12 +5,9 @@ import ChatForm from './components/ChatForm/ChatForm';
 import Conversation from './components/Conversation/Conversation';
 import { ConversationProvider } from './contexts/ConversationContext';
 import { UserProvider } from './contexts/UserContext';
-import getAuthToken from './api/auth';
 
 function App() {
-  const [isSidebarVisible, setSidebarVisible] = useState(false);
-
-  getAuthToken();                                      
+  const [isSidebarVisible, setSidebarVisible] = useState(false);                                    
 
   return (
     <UserProvider>

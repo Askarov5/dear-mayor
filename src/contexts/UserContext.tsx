@@ -1,4 +1,5 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import getAuthToken from '../api/auth';
 
 interface User {
   id: string;
@@ -28,6 +29,12 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(testUser);
   const [authToken, setAuthToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    getAuthToken().then((token) => {
+      setAuthToken(token);
+    });
+  }, [user]);
 
   return (
     <UserContext.Provider value={{ user, authToken, setUser, setAuthToken }}>
