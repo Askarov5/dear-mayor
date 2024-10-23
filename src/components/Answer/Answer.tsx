@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import LaunchChatAva from '../../assets/launch-chat-avatar.svg?react';
 import {
   Feedback,

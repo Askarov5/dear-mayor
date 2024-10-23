@@ -1,4 +1,3 @@
-import React from 'react';
 import CaretDown from '../../assets/i-caret-down.svg?react';
 import Link from '../../assets/i-link.svg?react';
 import { IResource } from '../../types/conversationTypes';
