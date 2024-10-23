@@ -13,6 +13,7 @@ const getAllConversations = async (containerName: string) => {
       {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Access-Control-Allow-Origin': '*',
         },
       },
     );
@@ -39,6 +40,7 @@ const getConversation = async (
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
+        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({
         containerName: containerName,
@@ -79,6 +81,7 @@ export const historyGenerate = async (
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
+      'Access-Control-Allow-Origin': '*',
     },
     body: body,
     signal: abortSignal,
@@ -133,6 +136,7 @@ const updateMessageFeedback = async (
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
+        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({
         containerName: containerName,

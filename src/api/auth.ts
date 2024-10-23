@@ -14,7 +14,7 @@ const getAuthToken = async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        AccessControlAllowOrigin: 'true',
+        'Access-Control-Allow-Origin': '*',
       },
       body: new URLSearchParams({
         grant_type: grant_type as string,
