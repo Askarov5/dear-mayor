@@ -1,28 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Header from './components/Header/Header';
 import Sidebar from './components/Sidebar/Sidebar';
 import ChatForm from './components/ChatForm/ChatForm';
 import Conversation from './components/Conversation/Conversation';
 import { ConversationProvider } from './contexts/ConversationContext';
-import { UserProvider, useUser } from './contexts/UserContext';
+import { UserProvider } from './contexts/UserContext';
 import getAuthToken from './api/auth';
 
 function App() {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
-  const { user } = useUser();
-  
-  useEffect(() => {
-    if (!user) {
-      getAuthToken();
-    }
-   }, [user]);
+
+  getAuthToken();                                      
 
   return (
     <UserProvider>
       <ConversationProvider>
         <div
-          className={`flex relative w-screen h-screen bg-chat-white dark:bg-chat-dark dark:text-default-txt-dark ${isSidebarVisible ? 'px-2' : 'px-5'
-            }`}
+          className={`flex relative w-screen h-screen bg-chat-white dark:bg-chat-dark dark:text-default-txt-dark ${
+            isSidebarVisible ? 'px-2' : 'px-5'
+          }`}
         >
           {isSidebarVisible && (
             <Sidebar setIsSideBarVisible={setSidebarVisible} />
