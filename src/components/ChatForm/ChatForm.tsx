@@ -39,7 +39,7 @@ const ChatForm: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-1 pb-2 w-[90%] md:w-[80%] md:max-w-[720px] justify-self-center">
+    <div className="flex flex-col gap-1 pb-2 px-8 lg:px-36 w-full max-w-[720px] lg:max-w-[1024px] justify-self-center">
       <form
         className="flex font-default bg-chat-dark dark:bg-chat-dark-inverse rounded-full items-center justify-between justify-self-center p-1 pl-2 gap-3 min-w-full"
         onSubmit={handleSubmit}

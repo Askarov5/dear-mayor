@@ -34,6 +34,7 @@ const getAllConversations = async (containerName: string) => {
 const getConversation = async (
   id: string,
   containerName: string,
+  indexName: string,
 ): Promise<IConversation> => {
   try {
     const response = await fetch(getFullUrl(`/history/read`), {
@@ -46,6 +47,7 @@ const getConversation = async (
       body: JSON.stringify({
         containerName: containerName,
         conversation_id: id,
+        indexName: indexName,
       }),
     });
 

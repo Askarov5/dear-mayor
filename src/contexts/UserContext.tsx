@@ -12,6 +12,7 @@ interface User {
   name: string;
   email: string;
   containerName: string;
+  indexName: string;
 }
 
 interface UserContextType {
@@ -28,6 +29,7 @@ const testUser: User = {
   name: 'Test User',
   email: 'test@test.com',
   containerName: 'sanfransisco',
+  indexName: 'sanfransisco',
 };
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({

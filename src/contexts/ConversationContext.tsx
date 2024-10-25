@@ -30,6 +30,9 @@ type ConversationContextType = {
     React.SetStateAction<IConversation | IConversationRequest | null>
   >;
   setCurrentConversationById: (conversationId: string) => void;
+
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const ConversationContext = createContext<ConversationContextType | undefined>(
@@ -59,6 +62,7 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
   >(null);
   const [amountOfConversations, setAmountOfConversations] = useState<number>(0);
   const { user } = useUser();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchAllConversations = async () => {
@@ -84,6 +88,8 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
       const lastMessage =
         currentConversation.messages[currentConversation.messages.length - 1];
       if (lastMessage && lastMessage.role === 'user') {
+        await setIsLoading(true);
+
         // Add the message to the backend
         const resp = await historyGenerate(
           currentConversation,
@@ -92,6 +98,9 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
 
         if (resp.ok) {
           const respBody: IChatResponse = await resp.json();
+          // new conversation started
+          if (currentConversation.messages.length === 1)
+            setAmountOfConversations(amountOfConversations + 1);
 
           const updatedAiMessages = addIdDateToMessages(
             respBody.choices[0].messages,
@@ -107,6 +116,8 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
           };
           setCurrentConversation(updatedConversation);
 
+          await setIsLoading(false);
+
           await historyUpdate(updatedConversation);
           console.log(currentConversation);
         }
@@ -114,7 +125,7 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
     };
 
     getAnswer();
-  }, [currentConversation]);
+  }, [currentConversation, amountOfConversations]);
 
   // handle adding a new question to backend
   const addMessage = async (question: IChatMessage) => {
@@ -123,10 +134,8 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
       setCurrentConversation({
         messages: [question],
         containerName: user?.containerName,
-        indexName: user?.containerName,
+        indexName: user?.indexName,
       });
-      // new conversation started
-      setAmountOfConversations(amountOfConversations + 1);
     } else {
       // Add the question to the current conversation
       const existingMessages = currentConversation?.messages || [];
@@ -157,8 +166,6 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
       if (currentConversation) {
         setCurrentConversation({ ...currentConversation, messages });
       }
-
-      // Update the message in the backend
     }
   };
 
@@ -166,7 +173,15 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
     const conversation = await getConversation(
       conversationId,
       user?.containerName as string,
+      user?.indexName as string,
     );
+
+    // backend bug  - not adding indexName to the conversation
+    if (!('indexName' in conversation)) {
+      conversation.indexName = user?.indexName;
+    }
+
+    // update ui state
     if (conversation) {
       setCurrentConversation(conversation);
       console.log('Current conversation:', conversation);
@@ -244,6 +259,9 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
         currentConversation,
         setCurrentConversation,
         setCurrentConversationById,
+
+        isLoading,
+        setIsLoading,
       }}
     >
       {children}

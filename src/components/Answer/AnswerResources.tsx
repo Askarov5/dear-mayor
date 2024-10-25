@@ -6,16 +6,20 @@ const AnswerResources = ({
   resources,
   isResourcesVisible,
   toggleVisibility,
+  isAnswerTypingComplete,
 }: {
   resources: ICitation[];
   isResourcesVisible: boolean;
   toggleVisibility: () => void;
+  isAnswerTypingComplete: boolean;
 }) => {
   const isLessResources = resources.length <= 5;
   if (isLessResources) isResourcesVisible = true;
 
   return (
-    <div className="resources flex flex-col gap-2.5">
+    <div
+      className={`resources flex flex-col gap-2.5 transition-opacity duration-1000 ${isAnswerTypingComplete ? 'opacity-100 h-auto overflow-auto' : 'opacity-0 h-0 overflow-hidden'}`}
+    >
       <div>
         {isLessResources ? (
           <p className="py-2 px-3 font-bold">

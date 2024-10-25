@@ -27,6 +27,7 @@ const Answer = ({
   const [feedback, setFeedback] = useState<Feedback>(
     answer.feedback as Feedback,
   );
+  const [isAnswerTypingComplete, setIsAnswerTypingComplete] = useState(false);
 
   const { user } = useUser();
 
@@ -69,17 +70,22 @@ const Answer = ({
         <LaunchChatAva />
       </div>
       <div className="flex flex-col gap-2">
-        <AnswerContent content={parsedAnswer?.markdownFormatText as string} />
+        <AnswerContent
+          content={parsedAnswer?.markdownFormatText as string}
+          isAnswerTypingComplete={isAnswerTypingComplete}
+          setIsAnswerTypingComplete={() => setIsAnswerTypingComplete(true)}
+        />
 
-        {
-          parsedAnswer?.citations && parsedAnswer.citations.length > 0 && <AnswerResources
+        {parsedAnswer?.citations && parsedAnswer.citations.length > 0 && (
+          <AnswerResources
             resources={parsedAnswer?.citations as ICitation[]}
             isResourcesVisible={isResourcesVisible}
             toggleVisibility={toggleVisibility}
+            isAnswerTypingComplete={isAnswerTypingComplete}
           />
-        }
+        )}
 
-        {/*<Citations  citationsList={parsedAnswer?.citations as ICitation[]}/> */}
+        {/* <Citations  citationsList={parsedAnswer?.citations as ICitation[]}/> */}
         <AnswerActions feedback={feedback} updateFeedback={updateFeedback} />
       </div>
     </div>

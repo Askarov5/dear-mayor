@@ -8,8 +8,8 @@ const QuestionContent = ({
   content: string;
   onEdit: () => void;
 }) => (
-  <div className="flex justify-end items-center gap-4 group-hover:flex group">
-    <div className="hidden group-hover:flex">
+  <div className="flex justify-end items-center gap-4 group-hover:opacity-100 group ">
+    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
       <IconButton
         icon={<IPen className="w-6 h-6" />}
         tooltip={{ content: 'Edit message' }}

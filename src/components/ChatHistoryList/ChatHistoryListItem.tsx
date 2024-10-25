@@ -8,6 +8,7 @@ import ShareIcon from '../../assets/i-share.svg?react';
 import ChatHistoryItemEdit from './ChatHistoryListItemEdit';
 import { useConversationContext } from '../../contexts/ConversationContext';
 import { useEffect, useState } from 'react';
+import { ReactTyped } from 'react-typed';
 
 const ChatHistoryItem = ({
   index,
@@ -37,7 +38,7 @@ const ChatHistoryItem = ({
     {
       icon: <ShareIcon />,
       label: 'Share',
-      action: () => { },
+      action: () => {},
     },
     {
       icon: <Pen />,
@@ -75,7 +76,16 @@ const ChatHistoryItem = ({
         />
       ) : (
         <span className="font-light text-base font-default w-9/12 truncate ...">
-          {historyItem.title}
+          <ReactTyped
+            strings={[historyItem.title]}
+            typeSpeed={1}
+            backSpeed={1050}
+            loop={false}
+            showCursor={false}
+            onComplete={(self: { stop: () => void }) => {
+              self.stop();
+            }}
+          />
         </span>
       )}
       <div className="relative">

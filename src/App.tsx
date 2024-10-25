@@ -19,7 +19,7 @@ function App() {
           {isSidebarVisible && (
             <Sidebar setIsSideBarVisible={setSidebarVisible} />
           )}
-          <div className="flex flex-col items-center gap-2.5 flex-1 font-default dark:bg-chat-dark dark:text-default-txt-dark">
+          <div className="flex flex-col items-center flex-1 font-default dark:bg-chat-dark dark:text-default-txt-dark">
             <Header
               setIsSideBarVisible={setSidebarVisible}
               isSidebarVisible={isSidebarVisible}
