@@ -1,30 +1,3 @@
-export type TMessageType = 'question' | 'answer';
-
-export interface IQuestion {
-  content: string;
-  attachments: File[];
-}
-
-export interface IResource {
-  title: string;
-  link: string;
-}
-
-export interface IAnswer {
-  content: string;
-  resources: IResource[];
-  options: {
-    like: boolean;
-    dislike: boolean;
-    refresh: boolean;
-  };
-}
-
-export interface IInteraction {
-  type: TMessageType;
-  content: IQuestion | IAnswer;
-}
-
 export interface IChatHistory {
   createdAt: string;
   id: string;
@@ -68,16 +41,69 @@ export interface IChatMessage {
   date: string;
   feedback?: Feedback;
   context?: string;
-  resources?: IResource[];
 }
 
 export interface IConversation {
   conversation_id: string;
   messages: IChatMessage[];
+  containerName?: string;
+  indexName?: string;
 }
 
 export interface IConversationRequest {
   messages: IChatMessage[];
   containerName?: string;
   indexName?: string;
+}
+
+export enum ChatCompletionType {
+  ChatCompletion = 'chat.completion',
+  ChatCompletionChunk = 'chat.completion.chunk',
+}
+
+export interface IChatResponseChoice {
+  messages: IChatMessage[];
+}
+
+export interface IChatResponse {
+  id: string;
+  model: string;
+  created: number;
+  object: ChatCompletionType;
+  choices: IChatResponseChoice[];
+  history_metadata: {
+    conversation_id: string;
+    title: string;
+    date: string;
+  };
+  error?: unknown;
+}
+
+export type ExecResults = {
+  intent: string;
+  search_query: string | null;
+  search_result: string | null;
+  code_generated: string | null;
+};
+
+export interface IAskResponse {
+  answer: string | [];
+  citations: ICitation[];
+  generated_chart: string | null;
+  error?: string;
+  message_id?: string;
+  feedback?: Feedback;
+  exec_results?: ExecResults[];
+}
+
+export interface ICitation {
+  part_index?: number;
+  content: string;
+  id: string;
+  title: string | null;
+  filepath: string | null;
+  url: string | null;
+  metadata: string | null;
+  chunk_id: string | null;
+  reindex_id: string | null;
 }

@@ -9,7 +9,8 @@ const token = import.meta.env.VITE_AUTH_TOKEN;
 // get all conversations
 const getAllConversations = async (containerName: string) => {
   try {
-    const response = await fetch(getFullUrl(`/history/list?containerName=${containerName}`),
+    const response = await fetch(
+      getFullUrl(`/history/list?containerName=${containerName}`),
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -98,18 +99,86 @@ export const historyGenerate = async (
 };
 
 // update messages on database
-export const historyUpdate = async (conversation: IConversation): Promise<Response> => {
+export const historyUpdate = async (
+  conversation: IConversation,
+): Promise<Response> => {
   const response = await fetch(getFullUrl(`/history/update`), {
     method: 'POST',
     body: JSON.stringify(conversation),
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
-      'Access-Control-Allow-Origin':'*'
+      'Access-Control-Allow-Origin': '*',
     },
   })
     .then(async (res) => {
       console.log('sucessfully updated database');
+      return res;
+    })
+    .catch((_err) => {
+      console.error('There was an issue fetching your data.');
+      console.error(_err);
+      const errRes: Response = {
+        ...new Response(),
+        ok: false,
+        status: 500,
+      };
+      return errRes;
+    });
+  return response;
+};
+
+export const historyRename = async (
+  convId: string,
+  title: string,
+  containerName: string,
+): Promise<Response> => {
+  const response = await fetch(getFullUrl('/history/rename'), {
+    method: 'POST',
+    body: JSON.stringify({
+      conversation_id: convId,
+      title: title,
+      containerName: containerName,
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      'Access-Control-Allow-Origin': '*',
+    },
+  })
+    .then((res) => {
+      return res;
+    })
+    .catch((_err) => {
+      console.error('There was an issue fetching your data.');
+      console.error(_err);
+      const errRes: Response = {
+        ...new Response(),
+        ok: false,
+        status: 500,
+      };
+      return errRes;
+    });
+  return response;
+};
+
+export const historyDelete = async (
+  convId: string,
+  containerName: string,
+): Promise<Response> => {
+  const response = await fetch(getFullUrl('/history/delete'), {
+    method: 'DELETE',
+    body: JSON.stringify({
+      conversation_id: convId,
+      containerName: containerName,
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      'Access-Control-Allow-Origin': '*',
+    },
+  })
+    .then((res) => {
       return res;
     })
     .catch((_err) => {
@@ -146,7 +215,9 @@ const updateMessageFeedback = async (
     });
 
     if (!response.ok) {
-      throw new Error(`Error posting feedback: ${response.statusText} \n ${await response.text()}`);
+      throw new Error(
+        `Error posting feedback: ${response.statusText} \n ${await response.text()}`,
+      );
     }
 
     return await response.json();
@@ -156,4 +227,8 @@ const updateMessageFeedback = async (
   }
 };
 
-export { getAllConversations, getConversation, updateMessageFeedback as postMessageFeedback };
+export {
+  getAllConversations,
+  getConversation,
+  updateMessageFeedback as postMessageFeedback,
+};

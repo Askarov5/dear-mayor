@@ -1,25 +1,33 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
+  IChatResponse,
   IConversation,
-  IInteraction,
-  IQuestion,
+  IConversationRequest,
 } from '../types/conversationTypes';
-import { getAllConversations, getConversation } from '../api/conversations';
-import { IChatHistory } from '../types/conversationTypes';
+import {
+  getAllConversations,
+  getConversation,
+  historyDelete,
+  historyGenerate,
+  historyRename,
+  historyUpdate,
+} from '../api/conversations';
+import { IChatHistory, IChatMessage } from '../types/conversationTypes';
 import { useUser } from './UserContext';
+import { addIdDateToMessages } from '../utils/helper';
 
 type ConversationContextType = {
-  messages: IInteraction[];
-  setMessages: React.Dispatch<React.SetStateAction<IInteraction[]>>;
-  addQuestion: (question: IQuestion) => void;
-  editQuestion: (updatedContent: string, index: number) => void;
+  addMessage: (question: IChatMessage) => void;
+  editMessage: (updatedContent: string, messageId: string) => void;
 
   conversations: IChatHistory[];
   setConversations: React.Dispatch<React.SetStateAction<IChatHistory[]>>;
+  renameConversation: (conversationId: string, title: string) => void;
+  deleteConversation: (conversationId: string) => void;
 
-  currentConversation: IConversation | null;
+  currentConversation: IConversation | IConversationRequest | null;
   setCurrentConversation: React.Dispatch<
-    React.SetStateAction<IConversation | null>
+    React.SetStateAction<IConversation | IConversationRequest | null>
   >;
   setCurrentConversationById: (conversationId: string) => void;
 };
@@ -45,55 +53,14 @@ interface ConversationProviderProps {
 const ConversationProvider: React.FC<ConversationProviderProps> = ({
   children,
 }) => {
-  const initialMessages: IInteraction[] = [
-    {
-      type: 'question',
-      content: {
-        content: "I'm typing a question?",
-        attachments: [],
-      },
-    },
-    {
-      type: 'answer',
-      content: {
-        content:
-          "There was that time artists at Sequence opted to hand-Sharpie the lorem ipsum passage on a line of paper bags they designed for Chipotle—the result being a mixture of avant-garde, inside joke, and Sharpie-stained tables. Those with an eye for detail may have caught a tribute to the classic text in an episode of Mad Men (S6E1 around 1:18:55 for anyone that didn’t). And here is a lorem ipsum tattoo.Of course, we'd be remiss not to include the veritable cadre of lorem ipsum knock offs featuring:",
-        resources: [
-          {
-            title: 'Resource title 1',
-            link: 'https://www.google.com',
-          },
-          {
-            title: 'Resource title 2',
-            link: 'https://www.google.com',
-          },
-          {
-            title: 'Resource title 1',
-            link: 'https://www.google.com',
-          },
-          {
-            title: 'Resource title 2',
-            link: 'https://www.google.com',
-          },
-        ],
-        options: {
-          like: false,
-          dislike: false,
-          refresh: false,
-        },
-      },
-    },
-  ];
-
-  const [messages, setMessages] = useState<IInteraction[]>(initialMessages);
   const [conversations, setConversations] = useState<IChatHistory[]>([]);
-  const [currentConversation, setCurrentConversation] =
-    useState<IConversation | null>(null);
+  const [currentConversation, setCurrentConversation] = useState<
+    IConversation | IConversationRequest | null
+  >(null);
+  const [amountOfConversations, setAmountOfConversations] = useState<number>(0);
   const { user } = useUser();
 
   useEffect(() => {
-    console.log('Messages updated:', messages);
-
     const fetchAllConversations = async () => {
       try {
         const response = await getAllConversations(
@@ -106,27 +73,92 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
     };
 
     fetchAllConversations();
-  }, [user]);
+  }, [user, amountOfConversations]);
 
-  const addQuestion = (question: IQuestion) => {
-    const newMessage: IInteraction = {
-      type: 'question',
-      content: question,
+  useEffect(() => {
+    // Fetch the AI response and save it to the current conversation
+    const getAnswer = async () => {
+      if (!currentConversation) return;
+
+      // Check if the last message is from the user
+      const lastMessage =
+        currentConversation.messages[currentConversation.messages.length - 1];
+      if (lastMessage && lastMessage.role === 'user') {
+        // Add the message to the backend
+        const resp = await historyGenerate(
+          currentConversation,
+          new AbortController().signal,
+        );
+
+        if (resp.ok) {
+          const respBody: IChatResponse = await resp.json();
+
+          const updatedAiMessages = addIdDateToMessages(
+            respBody.choices[0].messages,
+          );
+          const updatedMessages = [
+            ...currentConversation.messages,
+            ...updatedAiMessages,
+          ];
+          const updatedConversation = {
+            ...currentConversation,
+            conversation_id: respBody.history_metadata.conversation_id,
+            messages: updatedMessages,
+          };
+          setCurrentConversation(updatedConversation);
+
+          await historyUpdate(updatedConversation);
+          console.log(currentConversation);
+        }
+      }
     };
 
-    setMessages([...messages, newMessage]);
+    getAnswer();
+  }, [currentConversation]);
+
+  // handle adding a new question to backend
+  const addMessage = async (question: IChatMessage) => {
+    if (!currentConversation) {
+      // Add the question to the current conversation with temp ID for quick UI update
+      setCurrentConversation({
+        messages: [question],
+        containerName: user?.containerName,
+        indexName: user?.containerName,
+      });
+      // new conversation started
+      setAmountOfConversations(amountOfConversations + 1);
+    } else {
+      // Add the question to the current conversation
+      const existingMessages = currentConversation?.messages || [];
+      const messages = [...existingMessages, question];
+
+      if (currentConversation) {
+        setCurrentConversation({ ...currentConversation, messages });
+      }
+    }
   };
 
-  const editQuestion = (updatedContent: string, index: number) => {
-    const existingMessage = messages[index];
+  const editMessage = (updatedContent: string, messageId: string) => {
+    const existingMessageIndex = currentConversation?.messages.findIndex(
+      (m) => m.id == messageId,
+    );
+    const existingMessage =
+      currentConversation?.messages[existingMessageIndex as number];
 
-    if (index >= 0 && updatedContent.trim() !== '') {
+    if (updatedContent.trim() !== '' && existingMessage) {
       // Update the content
-      existingMessage.content.content = updatedContent;
+      existingMessage.content = updatedContent;
 
       // Remove all after the question and add the updated question
-      const updatedMessages = [...messages.slice(0, index), existingMessage];
-      setMessages(updatedMessages);
+      const messages = [
+        ...currentConversation.messages.slice(0, existingMessageIndex),
+        existingMessage,
+      ];
+      if (currentConversation) {
+        setCurrentConversation({ ...currentConversation, messages });
+      }
+
+      // Update the message in the backend
     }
   };
 
@@ -141,15 +173,74 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
     }
   };
 
+  const renameConversation = async (conversationId: string, title: string) => {
+    try {
+      const response = await historyRename(
+        conversationId,
+        title,
+        user?.containerName as string,
+      );
+      if (response.ok) {
+        console.log('Successfully renamed conversation:', conversationId);
+
+        // update ui state
+        const conv = conversations.find(
+          (conversation) => conversation.id === conversationId,
+        );
+        if (conv) {
+          conv.title = title;
+          setConversations([...conversations]);
+        }
+      }
+    } catch (error) {
+      console.error('Error renaming conversation:', error);
+    }
+  };
+
+  const deleteConversation = async (conversationId: string) => {
+    try {
+      const deleteConv = conversations.find(
+        (conversation) => conversation.id === conversationId,
+      );
+
+      // delete from backend
+      const response = await historyDelete(
+        conversationId,
+        user?.containerName as string,
+      );
+      if (response.ok) {
+        console.log('Successfully deleted conversation:', conversationId);
+
+        // update ui state
+        const index = conversations.indexOf(deleteConv as IChatHistory);
+        if (index > -1) {
+          conversations.splice(index, 1);
+          setConversations([...conversations]);
+        }
+
+        // update current conversation if it is the one being deleted
+        if (
+          currentConversation &&
+          'conversation_id' in currentConversation &&
+          currentConversation.conversation_id === conversationId
+        ) {
+          setCurrentConversation(null);
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting conversation:', error);
+    }
+  };
+
   return (
     <ConversationContext.Provider
       value={{
-        messages,
-        addQuestion: addQuestion,
-        editQuestion: editQuestion,
-        setMessages,
+        addMessage,
+        editMessage,
         conversations,
         setConversations,
+        renameConversation,
+        deleteConversation,
         currentConversation,
         setCurrentConversation,
         setCurrentConversationById,

@@ -1,13 +1,13 @@
 import CaretDown from '../../assets/i-caret-down.svg?react';
 import Link from '../../assets/i-link.svg?react';
-import { IResource } from '../../types/conversationTypes';
+import { ICitation } from '../../types/conversationTypes';
 
 const AnswerResources = ({
   resources,
   isResourcesVisible,
   toggleVisibility,
 }: {
-  resources: IResource[];
+  resources: ICitation[];
   isResourcesVisible: boolean;
   toggleVisibility: () => void;
 }) => {
@@ -38,12 +38,12 @@ const AnswerResources = ({
         {resources.map((resource, index) => (
           <li key={index}>
             <a
-              href={resource.link}
+              href={resource.url as string}
               target="_blank"
               rel="noreferrer"
               className="group flex gap-2 p-1 items-center hover:text-interactive-primary hover:fill-interactive-primary dark:fill-default-txt-dark"
             >
-              <Link className="group-hover:fill-interactive-primary" />
+              <Link className="group-hover:fill-interactive-primary min-w-4" />
               <span className="group-hover:text-interactive-primary">
                 {resource.title}
               </span>

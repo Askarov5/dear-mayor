@@ -18,7 +18,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`p-2 rounded-lg fill-default-txt dark:fill-default-txt-dark hover:bg-interactive-secondary dark:hover:bg-interactive-tertiary-dark ${isActive ? 'bg-interactive-secondary dark:bg-interactive-tertiary-dark' : ''}`}
+      className={`p-2 rounded-lg fill-default-txt transition-all duration-300 dark:fill-default-txt-dark hover:bg-interactive-secondary dark:hover:bg-interactive-tertiary-dark ${isActive ? 'bg-interactive-secondary dark:bg-interactive-tertiary-dark' : ''}`}
       {...(tooltip
         ? {
             'data-tooltip-id': 'icon-btn_tt',

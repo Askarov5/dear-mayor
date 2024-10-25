@@ -53,7 +53,7 @@ const Dropdown = () => {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        className={`flex items-center justify-between p-2 md:p-3 gap-1 rounded-lg ${isDropdown ? 'bg-chat-dark fill-chat-default' : 'fill-default-txt bg-transparent '} hover:bg-interactive-secondary hover:fill-default-txt  dark:fill-chat-default dark:bg-secondary-txt transition-all duration-200`}
+        className={`flex items-center justify-between p-2 md:p-3 gap-1 rounded-lg transition-colors duration-300 ${isDropdown ? 'bg-chat-dark fill-chat-default' : 'fill-default-txt bg-transparent '} hover:bg-interactive-secondary hover:fill-default-txt  dark:fill-chat-default dark:bg-secondary-txt transition-all duration-200`}
         onClick={() => setIsDropdown(!isDropdown)}
         title="Menu"
       >

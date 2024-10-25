@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { ICitation } from './conversationTypes';
 
 export type TToolTip = {
   content: string;
@@ -22,3 +23,9 @@ export type ListItemWithIcon = {
   label: string;
   action: () => void;
 };
+
+export interface IParsedAnswer {
+  citations: ICitation[];
+  markdownFormatText: string;
+  generated_chart: string | null;
+}

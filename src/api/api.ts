@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { chatHistorySampleData } from '../constants/chatHistory';
-
 import {
   ChatMessage,
   Conversation,
@@ -43,7 +41,7 @@ export async function getUserInfo(): Promise<UserInfo[]> {
 export const fetchChatHistoryInit = (): Conversation[] | null => {
   // Make initial API call here
 
-  return chatHistorySampleData;
+  return [];
 };
 
 export const historyList = async (

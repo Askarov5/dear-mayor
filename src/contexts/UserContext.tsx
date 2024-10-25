@@ -1,4 +1,10 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useEffect,
+} from 'react';
 import getAuthToken from '../api/auth';
 
 interface User {

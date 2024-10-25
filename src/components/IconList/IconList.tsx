@@ -5,7 +5,7 @@ const IconList = ({ listItems }: { listItems: ListItemWithIcon[] }) => {
     <ul className="flex flex-col min-w-full p-3 bg-chat-default dark:bg-chat-dark-inverse rounded-lg shadow-lg absolute top-[60px] left-0 text-nowrap font-light z-10">
       {listItems.map((item) => (
         <li
-          className="flex items-center gap-3 py-3 px-2 cursor-pointer rounded-lg dark:fill-chat-default dark:text-chat-default hover:bg-interactive-secondary dark:hover:bg-interactive-tertiary-dark"
+          className="flex items-center gap-3 py-3 px-2 cursor-pointer rounded-lg transition-colors duration-300 dark:fill-chat-default dark:text-chat-default hover:bg-interactive-secondary dark:hover:bg-interactive-tertiary-dark"
           key={item.label}
           onClick={item.action}
         >

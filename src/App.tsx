@@ -7,13 +7,12 @@ import { ConversationProvider } from './contexts/ConversationContext';
 import { UserProvider } from './contexts/UserContext';
 
 function App() {
-  const [isSidebarVisible, setSidebarVisible] = useState(false);                                    
-
+  const [isSidebarVisible, setSidebarVisible] = useState(false);
   return (
     <UserProvider>
       <ConversationProvider>
         <div
-          className={`flex relative w-screen h-screen bg-chat-white dark:bg-chat-dark dark:text-default-txt-dark ${
+          className={`flex relative w-screen h-screen bg-chat-white dark:bg-chat-dark dark:text-default-txt-dark transition-all duration-1000 ${
             isSidebarVisible ? 'px-2' : 'px-5'
           }`}
         >

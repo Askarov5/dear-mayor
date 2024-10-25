@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useConversationContext } from '../../contexts/ConversationContext';
-import { IQuestion } from '../../types/conversationTypes';
+import { IChatMessage } from '../../types/conversationTypes';
 import PaperClip from '../../assets/i-paper-clip.svg?react';
 import ArrowUpIcon from '../../assets/i-arrow-up.svg?react';
 import { Tooltip } from 'react-tooltip';
+import { getUniqueId } from '../../utils/helper';
 
 const ChatForm: React.FC = () => {
-  const { addQuestion } = useConversationContext();
+  const { addMessage: addQuestion } = useConversationContext();
   const [isInputEmpty, setIsInputEmpty] = useState(true);
   const [question, setQuestion] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -15,6 +16,7 @@ const ChatForm: React.FC = () => {
     if (e.target.files && e.target.files.length > 0) {
       setSelectedFile(e.target.files[0]);
     }
+    console.log('selected file:' + selectedFile);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -24,9 +26,11 @@ const ChatForm: React.FC = () => {
     if (question === '') return;
 
     // Add new message
-    const newQuestion: IQuestion = {
+    const newQuestion: IChatMessage = {
+      id: getUniqueId(),
       content: question,
-      attachments: selectedFile ? [selectedFile] : [],
+      role: 'user',
+      date: new Date().toISOString(),
     };
     addQuestion(newQuestion);
     // Reset form
@@ -71,7 +75,7 @@ const ChatForm: React.FC = () => {
         <button
           type="submit"
           disabled={isInputEmpty}
-          className="p-2 rounded-full bg-secondary-txt enabled:bg-interactive-enabled enabled:fill-chat-dark disabled:fill-interactive-disabled disabled:bg-secondary-txt"
+          className="p-2 rounded-full bg-secondary-txt transition-colors duration-300 enabled:bg-interactive-enabled enabled:fill-chat-dark disabled:fill-interactive-disabled disabled:bg-secondary-txt"
         >
           <ArrowUpIcon />
         </button>

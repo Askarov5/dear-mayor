@@ -24,7 +24,7 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
 }) => {
   const baseClasses =
-    'flex items-center leading-none rounded-lg cursor-pointer transition-colors duration-200 hover:shadow-md disabled:cursor-not-allowed ';
+    'flex items-center leading-none rounded-lg cursor-pointer transition-all duration-300 hover:shadow-md disabled:cursor-not-allowed ';
   const activeClasses =
     'active:bg-interactive-tertiary active:text-chat-default';
   const disabledClasses =

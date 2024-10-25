@@ -6,6 +6,9 @@ import ChatHistoryItem from './ChatHistoryListItem';
 const ChatHistoryList = () => {
   // handle dropdown
   const [openIndex, setOpenIndex] = useState('');
+  const [historyItemEditableID, setHistoryItemEditableID] = useState<
+    string | null
+  >(null);
 
   const toggleDropdown = (index: string) => {
     setOpenIndex(openIndex === index ? '' : index);
@@ -30,8 +33,7 @@ const ChatHistoryList = () => {
   }, []);
 
   // reformat data for chat history
-  const { conversations, setCurrentConversationById } =
-    useConversationContext();
+  const { conversations } = useConversationContext();
   const chatHistory = useMemo(
     () => formatChatHistory(conversations),
     [conversations],
@@ -51,8 +53,9 @@ const ChatHistoryList = () => {
                 historyItem={historyItem}
                 openIndex={openIndex}
                 toggleDropdown={toggleDropdown}
+                historyItemEditableID={historyItemEditableID}
+                setHistoryItemEditableID={setHistoryItemEditableID}
                 dropdownRef={dropdownRef}
-                setCurrentConversationById={setCurrentConversationById}
               />
             ))}
           </ul>
