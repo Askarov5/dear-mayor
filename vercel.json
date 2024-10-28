@@ -12,5 +12,15 @@
           "distDir": "dist"
         }
       }
+    ],
+    "routes": [
+      {
+        "src": "/api/(.*)",
+        "dest": "/src/api/middleware.js"
+      },
+      {
+        "src": "/(.*)",
+        "dest": "/dist/index.html"
+      }
     ]
   }
