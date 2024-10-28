@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "npm run start-middleware & npm run start-app",
+    "start": "npm run start-middleware & npm run start-app",
     "start-app": "vite",
     "start-middleware": "node ./src/api/middleware.js",
     "check": "prettier --check . && eslint .",
