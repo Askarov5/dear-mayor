@@ -95,38 +95,44 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
       const lastMessage =
         currentConversation.messages[currentConversation.messages.length - 1];
       if (lastMessage && lastMessage.role === 'user') {
-        await setIsLoading(true);
+        try {
+          await setIsLoading(true);
 
-        // Add the message to the backend
-        const resp = await historyGenerate(
-          currentConversation,
-          new AbortController().signal,
-        );
-
-        if (resp.ok) {
-          const respBody: IChatResponse = await resp.json();
-          // new conversation started
-          if (currentConversation.messages.length === 1)
-            setAmountOfConversations(amountOfConversations + 1);
-
-          const updatedAiMessages = addIdDateToMessages(
-            respBody.choices[0].messages,
+          // Add the message to the backend
+          const resp = await historyGenerate(
+            currentConversation,
+            new AbortController().signal,
           );
-          const updatedMessages = [
-            ...currentConversation.messages,
-            ...updatedAiMessages,
-          ];
-          const updatedConversation = {
-            ...currentConversation,
-            conversation_id: respBody.history_metadata.conversation_id,
-            messages: updatedMessages,
-          };
-          setCurrentConversation(updatedConversation);
 
-          await setIsLoading(false);
+          if (resp.ok) {
+            const respBody: IChatResponse = await resp.json();
+            // new conversation started
+            if (currentConversation.messages.length === 1)
+              setAmountOfConversations(amountOfConversations + 1);
 
-          await historyUpdate(updatedConversation);
-          console.log(currentConversation);
+            const updatedAiMessages = addIdDateToMessages(
+              respBody.choices[0].messages,
+            );
+            const updatedMessages = [
+              ...currentConversation.messages,
+              ...updatedAiMessages,
+            ];
+            const updatedConversation = {
+              ...currentConversation,
+              conversation_id: respBody.history_metadata.conversation_id,
+              messages: updatedMessages,
+            };
+            setCurrentConversation(updatedConversation);
+
+            await setIsLoading(false);
+
+            await historyUpdate(updatedConversation);
+            console.log(currentConversation);
+          }
+        } catch (error) {
+          console.error('Error generating response:', error);
+        } finally {
+          setIsLoading(false);
         }
       }
     };

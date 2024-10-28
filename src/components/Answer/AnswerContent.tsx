@@ -7,6 +7,7 @@ import {
   XSSAllowTags,
   XSSAllowAttributes,
 } from '../../constants/sanatizeAllowables';
+import style from './markdown-styles.module.css';
 
 const SANITIZE_ANSWER = true;
 
@@ -40,6 +41,7 @@ const AnswerContent = ({
       ) : (
         <ReactMarkdown
           remarkPlugins={[remarkGfm, supersub]}
+          className={style.markdown}
           children={sanitizedContent}
         />
       )}
