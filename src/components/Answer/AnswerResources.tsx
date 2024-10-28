@@ -1,5 +1,6 @@
 import CaretDown from '../../assets/i-caret-down.svg?react';
 import Link from '../../assets/i-link.svg?react';
+import { useConversationContext } from '../../contexts/ConversationContext';
 import { ICitation } from '../../types/conversationTypes';
 
 const AnswerResources = ({
@@ -13,8 +14,13 @@ const AnswerResources = ({
   toggleVisibility: () => void;
   isAnswerTypingComplete: boolean;
 }) => {
+  const { setSelectedResource } = useConversationContext();
   const isLessResources = resources.length <= 5;
   if (isLessResources) isResourcesVisible = true;
+
+  const handleResourceClick = (resource: ICitation) => {
+    setSelectedResource(resource);
+  };
 
   return (
     <div
@@ -41,17 +47,16 @@ const AnswerResources = ({
       >
         {resources.map((resource, index) => (
           <li key={index}>
-            <a
-              href={resource.url as string}
-              target="_blank"
+            <button
               rel="noreferrer"
-              className="group flex gap-2 p-1 items-center hover:text-interactive-primary hover:fill-interactive-primary dark:fill-default-txt-dark"
+              className="group flex gap-2 p-1 items-center text-start hover:text-interactive-primary hover:fill-interactive-primary dark:fill-default-txt-dark"
+              onClick={() => handleResourceClick(resource)}
             >
               <Link className="group-hover:fill-interactive-primary min-w-4" />
               <span className="group-hover:text-interactive-primary">
-                {resource.title}
+                {resource.reindex_id} - {resource.title}
               </span>
-            </a>
+            </button>
           </li>
         ))}
       </ul>

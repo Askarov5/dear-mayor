@@ -39,50 +39,52 @@ const ChatForm: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-1 pb-2 px-8 lg:px-36 w-full max-w-[720px] lg:max-w-[1024px] justify-self-center">
-      <form
-        className="flex font-default bg-chat-dark dark:bg-chat-dark-inverse rounded-full items-center justify-between justify-self-center p-1 pl-2 gap-3 min-w-full"
-        onSubmit={handleSubmit}
-      >
-        <label
-          htmlFor="file-upload"
-          className="fill-chat-default"
-          data-tooltip-id="file-upload_tt"
-          data-tooltip-content="Attach file"
-          data-tooltip-offset={15}
+    <div className="flex w-full justify-center lg:px-36">
+      <div className="flex flex-col gap-1 px-4 md:px-6 w-full max-w-[720px] lg:max-w-[1024px]">
+        <form
+          className="flex font-default bg-chat-dark dark:bg-chat-dark-inverse rounded-full items-center justify-between justify-self-center p-1 pl-2 gap-3 min-w-full"
+          onSubmit={handleSubmit}
         >
+          <label
+            htmlFor="file-upload"
+            className="fill-chat-default"
+            data-tooltip-id="file-upload_tt"
+            data-tooltip-content="Attach file"
+            data-tooltip-offset={15}
+          >
+            <input
+              type="file"
+              id="file-upload"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <PaperClip />
+            <Tooltip id="file-upload_tt" place="top" className="bg-chat-dark" />
+          </label>
+
           <input
-            type="file"
-            id="file-upload"
-            className="hidden"
-            onChange={handleFileChange}
+            type="text"
+            placeholder="Message Dear Mayor"
+            className="w-full bg-inherit p-1 font-default font-light outline-none placeholder:text-secondary-inverse-txt text-chat-default"
+            value={question}
+            onChange={(e) => {
+              setQuestion(e.target.value);
+              setIsInputEmpty(e.target.value === '');
+            }}
           />
-          <PaperClip />
-          <Tooltip id="file-upload_tt" place="top" className="bg-chat-dark" />
-        </label>
 
-        <input
-          type="text"
-          placeholder="Message Dear Mayor"
-          className="w-full bg-inherit p-1 font-default font-light outline-none placeholder:text-secondary-inverse-txt text-chat-default"
-          value={question}
-          onChange={(e) => {
-            setQuestion(e.target.value);
-            setIsInputEmpty(e.target.value === '');
-          }}
-        />
-
-        <button
-          type="submit"
-          disabled={isInputEmpty}
-          className="p-2 rounded-full bg-secondary-txt transition-colors duration-300 enabled:bg-interactive-enabled enabled:fill-chat-dark disabled:fill-interactive-disabled disabled:bg-secondary-txt"
-        >
-          <ArrowUpIcon />
-        </button>
-      </form>
-      <p className="text-center text-sm text-secondary-txt">
-        Dear Mayor can make mistakes. Check important info.
-      </p>
+          <button
+            type="submit"
+            disabled={isInputEmpty}
+            className="p-2 rounded-full bg-secondary-txt transition-colors duration-300 enabled:bg-interactive-enabled enabled:fill-chat-dark disabled:fill-interactive-disabled disabled:bg-secondary-txt"
+          >
+            <ArrowUpIcon />
+          </button>
+        </form>
+        <p className="text-center text-sm text-secondary-txt">
+          Dear Mayor can make mistakes. Check important info.
+        </p>
+      </div>
     </div>
   );
 };

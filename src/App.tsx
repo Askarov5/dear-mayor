@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Header from './components/Header/Header';
 import Sidebar from './components/Sidebar/Sidebar';
-import ChatForm from './components/ChatForm/ChatForm';
 import Conversation from './components/Conversation/Conversation';
 import { ConversationProvider } from './contexts/ConversationContext';
 import { UserProvider } from './contexts/UserContext';
@@ -25,7 +24,6 @@ function App() {
               isSidebarVisible={isSidebarVisible}
             />
             <Conversation />
-            <ChatForm />
           </div>
         </div>
       </ConversationProvider>

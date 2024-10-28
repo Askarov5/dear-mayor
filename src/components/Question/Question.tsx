@@ -20,7 +20,7 @@ const Question = ({
   } = useQuestion(question.content as string);
 
   return (
-    <div className="flex justify-end items-center gap-4 group-hover:flex group p-2 md:py-3 md:px-6">
+    <div className="flex justify-end items-center gap-4 group-hover:flex group p-2 md:py-3 md:px-6 w-full">
       {isEditing ? (
         <QuestionEditForm
           inputValue={inputValue}

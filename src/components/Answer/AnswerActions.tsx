@@ -1,7 +1,7 @@
 import React from 'react';
 import ThumbsDown from '../../assets/i-thumbs-down.svg?react';
 import ThumbUp from '../../assets/i-thumbs-up.svg?react';
-import Refresh from '../../assets/i-refresh.svg?react';
+// import Refresh from '../../assets/i-refresh.svg?react';
 import IconButton from '../IconButton/IconButton';
 import { Feedback } from '../../types/conversationTypes';
 
@@ -36,11 +36,11 @@ const AnswerActions: React.FC<AnswerActionsProps> = ({
           handleFeedback(Feedback.Negative);
         }}
       />
-      <IconButton
+      {/*<IconButton
         icon={<Refresh />}
         tooltip={{ content: 'Try again', place: 'bottom' }}
         onClick={() => {}}
-      />
+      />*/}
     </div>
   );
 };

@@ -59,8 +59,19 @@ const ChatHistoryItem = ({
   ];
 
   useEffect(() => {
-    if (historyItem.title !== newTitle)
-      renameConversation(historyItem.id, newTitle);
+    async function renameConv() {
+      try {
+        if (historyItem.title !== newTitle) {
+          await renameConversation(historyItem.id, newTitle);
+        }
+      } catch (error) {
+        console.error('Error renaming conversation:', error);
+      } finally {
+        setHistoryItemEditableID(null);
+      }
+    }
+
+    renameConv();
   }, [newTitle]);
 
   return (
@@ -71,7 +82,6 @@ const ChatHistoryItem = ({
       {historyItemEditableID === historyItem.id ? (
         <ChatHistoryItemEdit
           historyItemTitle={historyItem.title}
-          setHistoryItemEditableID={setHistoryItemEditableID}
           setNewTitle={setNewTitle}
         />
       ) : (
@@ -92,12 +102,14 @@ const ChatHistoryItem = ({
         <div
           className={`grid m-0 group-hover:block  transition-all duration-300 ${openIndex === itemIndex ? '' : 'hidden'}`}
         >
-          <div className="px-2 h-6 flex items-center">
-            <IconButton
-              icon={<IconOptions />}
-              onClick={() => toggleDropdown(itemIndex)}
-            />
-          </div>
+          {historyItemEditableID !== historyItem.id && (
+            <div className="px-2 h-6 flex items-center">
+              <IconButton
+                icon={<IconOptions />}
+                onClick={() => toggleDropdown(itemIndex)}
+              />
+            </div>
+          )}
         </div>
         {openIndex === itemIndex && (
           <div className="absolute bottom-11 right-32" ref={dropdownRef}>

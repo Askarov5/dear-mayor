@@ -65,7 +65,7 @@ const Answer = ({
   }
 
   return (
-    <div className="flex gap-4 min-w-[292px] max-w-[720px] rounded-3xl bg-transparent p-2 md:py-3 md:px-6">
+    <div className="flex relative gap-4 min-w-[292px] max-w-[720px] rounded-3xl bg-transparent p-2 md:py-3 md:px-6">
       <div className="fill-black">
         <LaunchChatAva />
       </div>
@@ -84,8 +84,6 @@ const Answer = ({
             isAnswerTypingComplete={isAnswerTypingComplete}
           />
         )}
-
-        {/* <Citations  citationsList={parsedAnswer?.citations as ICitation[]}/> */}
         <AnswerActions feedback={feedback} updateFeedback={updateFeedback} />
       </div>
     </div>

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   IChatResponse,
+  ICitation,
   IConversation,
   IConversationRequest,
 } from '../types/conversationTypes';
@@ -33,6 +34,9 @@ type ConversationContextType = {
 
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+
+  selectedResource: ICitation | null;
+  setSelectedResource: React.Dispatch<React.SetStateAction<ICitation | null>>;
 };
 
 const ConversationContext = createContext<ConversationContextType | undefined>(
@@ -63,6 +67,9 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
   const [amountOfConversations, setAmountOfConversations] = useState<number>(0);
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedResource, setSelectedResource] = useState<ICitation | null>(
+    null,
+  );
 
   useEffect(() => {
     const fetchAllConversations = async () => {
@@ -262,6 +269,9 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
 
         isLoading,
         setIsLoading,
+
+        selectedResource,
+        setSelectedResource,
       }}
     >
       {children}
