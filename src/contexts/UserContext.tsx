@@ -44,6 +44,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     });
   }, [user]);
 
+
   return (
     <UserContext.Provider value={{ user, authToken, setUser, setAuthToken }}>
       {children}

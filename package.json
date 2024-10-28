@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run start-middleware & npm run start-app",
+    "start-app": "vite",
+    "start-middleware": "node ./src/api/middleware.js",
     "check": "prettier --check . && eslint .",
     "write": "prettier --write . && eslint . --fix",
     "build": "tsc -b && vite build",
@@ -12,7 +14,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dompurify": "^3.1.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
     "lodash": "^4.17.21",
     "parse-json": "^8.1.0",
     "react": "^18.3.1",

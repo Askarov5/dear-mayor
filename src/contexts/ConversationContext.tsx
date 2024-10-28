@@ -23,14 +23,14 @@ type ConversationContextType = {
 
   conversations: IChatHistory[];
   setConversations: React.Dispatch<React.SetStateAction<IChatHistory[]>>;
-  renameConversation: (conversationId: string, title: string) => void;
-  deleteConversation: (conversationId: string) => void;
+  renameConversation: (conversationId: string, title: string, token:string) => void;
+  deleteConversation: (conversationId: string, token:string) => void;
 
   currentConversation: IConversation | IConversationRequest | null;
   setCurrentConversation: React.Dispatch<
     React.SetStateAction<IConversation | IConversationRequest | null>
   >;
-  setCurrentConversationById: (conversationId: string) => void;
+  setCurrentConversationById: (conversationId: string,token:string) => void;
 
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -65,7 +65,7 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
     IConversation | IConversationRequest | null
   >(null);
   const [amountOfConversations, setAmountOfConversations] = useState<number>(0);
-  const { user } = useUser();
+  const { user ,authToken } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedResource, setSelectedResource] = useState<ICitation | null>(
     null,
@@ -73,18 +73,22 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
 
   useEffect(() => {
     const fetchAllConversations = async () => {
-      try {
-        const response = await getAllConversations(
-          user?.containerName || 'sanfransisco',
-        );
-        setConversations(response);
-      } catch (error) {
-        console.error('Error fetching conversations:', error);
+      if(authToken) {
+        try {
+          const response = await getAllConversations(
+            user?.containerName || 'sanfransisco',
+            authToken,
+          );
+          setConversations(response);
+        } catch (error) {
+          console.error('Error fetching conversations:', error);
+        }
       }
+      
     };
 
     fetchAllConversations();
-  }, [user, amountOfConversations]);
+  }, [user, amountOfConversations,authToken]);
 
   useEffect(() => {
     // Fetch the AI response and save it to the current conversation
@@ -96,38 +100,40 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
         currentConversation.messages[currentConversation.messages.length - 1];
       if (lastMessage && lastMessage.role === 'user') {
         try {
-          await setIsLoading(true);
+          setIsLoading(true);
 
-          // Add the message to the backend
-          const resp = await historyGenerate(
-            currentConversation,
-            new AbortController().signal,
-          );
-
-          if (resp.ok) {
-            const respBody: IChatResponse = await resp.json();
-            // new conversation started
-            if (currentConversation.messages.length === 1)
-              setAmountOfConversations(amountOfConversations + 1);
-
-            const updatedAiMessages = addIdDateToMessages(
-              respBody.choices[0].messages,
+          if (authToken) {
+            // Add the message to the backend
+            const resp = await historyGenerate(
+              currentConversation,
+              new AbortController().signal,
+              authToken
             );
-            const updatedMessages = [
-              ...currentConversation.messages,
-              ...updatedAiMessages,
-            ];
-            const updatedConversation = {
-              ...currentConversation,
-              conversation_id: respBody.history_metadata.conversation_id,
-              messages: updatedMessages,
-            };
-            setCurrentConversation(updatedConversation);
+            if (resp.ok) {
+              const respBody: IChatResponse = await resp.json();
+              // new conversation started
+              if (currentConversation.messages.length === 1)
+                setAmountOfConversations(amountOfConversations + 1);
 
-            await setIsLoading(false);
+              const updatedAiMessages = addIdDateToMessages(
+                respBody.choices[0].messages,
+              );
+              const updatedMessages = [
+                ...currentConversation.messages,
+                ...updatedAiMessages,
+              ];
+              const updatedConversation = {
+                ...currentConversation,
+                conversation_id: respBody.history_metadata.conversation_id,
+                messages: updatedMessages,
+              };
+              setCurrentConversation(updatedConversation);
 
-            await historyUpdate(updatedConversation);
-            console.log(currentConversation);
+              setIsLoading(false);
+
+              await historyUpdate(updatedConversation, authToken);
+              console.log(currentConversation);
+            }
           }
         } catch (error) {
           console.error('Error generating response:', error);
@@ -138,8 +144,7 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
     };
 
     getAnswer();
-  }, [currentConversation, amountOfConversations]);
-
+  }, [currentConversation, amountOfConversations, authToken]);
   // handle adding a new question to backend
   const addMessage = async (question: IChatMessage) => {
     if (!currentConversation) {
@@ -182,11 +187,12 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
     }
   };
 
-  const setCurrentConversationById = async (conversationId: string) => {
+  const setCurrentConversationById = async (conversationId: string,token:string) => {
     const conversation = await getConversation(
       conversationId,
       user?.containerName as string,
       user?.indexName as string,
+      token
     );
 
     // backend bug  - not adding indexName to the conversation
@@ -201,12 +207,13 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
     }
   };
 
-  const renameConversation = async (conversationId: string, title: string) => {
+  const renameConversation = async (conversationId: string, title: string,token:string) => {
     try {
       const response = await historyRename(
         conversationId,
         title,
         user?.containerName as string,
+        token
       );
       if (response.ok) {
         console.log('Successfully renamed conversation:', conversationId);
@@ -225,7 +232,7 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
     }
   };
 
-  const deleteConversation = async (conversationId: string) => {
+  const deleteConversation = async (conversationId: string,token:string) => {
     try {
       const deleteConv = conversations.find(
         (conversation) => conversation.id === conversationId,
@@ -235,6 +242,7 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
       const response = await historyDelete(
         conversationId,
         user?.containerName as string,
+        token
       );
       if (response.ok) {
         console.log('Successfully deleted conversation:', conversationId);
@@ -272,6 +280,7 @@ const ConversationProvider: React.FC<ConversationProviderProps> = ({
         currentConversation,
         setCurrentConversation,
         setCurrentConversationById,
+       
 
         isLoading,
         setIsLoading,

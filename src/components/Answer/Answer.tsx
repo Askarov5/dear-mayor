@@ -29,7 +29,7 @@ const Answer = ({
   );
   const [isAnswerTypingComplete, setIsAnswerTypingComplete] = useState(false);
 
-  const { user } = useUser();
+  const { user,authToken } = useUser();
 
   const updateFeedback = (type: Feedback) => {
     // Update the feedback state
@@ -39,17 +39,19 @@ const Answer = ({
   useEffect(() => {
     // Send feedback to the backend
     const sendFeedback = async () => {
-      if (feedback) {
+      if (feedback && authToken) {
         await postMessageFeedback(
           answer.id as string,
           feedback,
           user?.containerName as string,
+          authToken
+
         );
       }
     };
 
     sendFeedback();
-  }, [feedback]);
+  }, [feedback,authToken]);
 
   // Parse the answer
   let parsedAnswer;

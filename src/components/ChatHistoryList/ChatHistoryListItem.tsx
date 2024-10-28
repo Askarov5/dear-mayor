@@ -9,7 +9,7 @@ import ChatHistoryItemEdit from './ChatHistoryListItemEdit';
 import { useConversationContext } from '../../contexts/ConversationContext';
 import { useEffect, useState } from 'react';
 import { ReactTyped } from 'react-typed';
-
+import { useUser } from '../../contexts/UserContext';
 const ChatHistoryItem = ({
   index,
   i,
@@ -33,6 +33,7 @@ const ChatHistoryItem = ({
     useConversationContext();
   const [newTitle, setNewTitle] = useState(historyItem.title);
   const itemIndex = `${index}-${i}`;
+  const { authToken } = useUser();
 
   const listItems: ListItemWithIcon[] = [
     {
@@ -52,17 +53,23 @@ const ChatHistoryItem = ({
       icon: <Delete />,
       label: 'Delete',
       action: () => {
-        deleteConversation(historyItem.id);
-        toggleDropdown('');
+        if(authToken ){
+          deleteConversation(historyItem.id,authToken);
+          toggleDropdown('');
+        }
+        else {
+          console.error('Failed to delete conversation');
+        }
       },
     },
   ];
 
   useEffect(() => {
-    async function renameConv() {
+
+    async function renameConv(token: string) { 
       try {
         if (historyItem.title !== newTitle) {
-          await renameConversation(historyItem.id, newTitle);
+          await renameConversation(historyItem.id, newTitle,token);
         }
       } catch (error) {
         console.error('Error renaming conversation:', error);
@@ -71,13 +78,21 @@ const ChatHistoryItem = ({
       }
     }
 
-    renameConv();
-  }, [newTitle]);
+    if(authToken) {
+      renameConv(authToken);
+    }
+
+  
+  }, [newTitle,authToken]);
 
   return (
     <li
       className={`flex items-center rounded-lg py-3 px-3 group cursor-pointer transition-all duration-300 ${historyItemEditableID !== historyItem.id ? 'hover:bg-interactive-secondary dark:hover:bg-interactive-tertiary' : ''} ${openIndex === itemIndex && historyItemEditableID !== historyItem.id ? 'bg-interactive-secondary dark:bg-interactive-tertiary' : ''}`}
-      onClick={() => setCurrentConversationById(historyItem.id)}
+      onClick={() => {
+        if(authToken) {
+          setCurrentConversationById(historyItem.id,authToken)}
+        }
+      }  
     >
       {historyItemEditableID === historyItem.id ? (
         <ChatHistoryItemEdit

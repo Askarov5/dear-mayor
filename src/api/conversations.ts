@@ -4,10 +4,8 @@ import {
 } from '../types/conversationTypes';
 import { getFullUrl } from '../utils/api';
 
-const token = import.meta.env.VITE_AUTH_TOKEN;
-
 // get all conversations
-const getAllConversations = async (containerName: string) => {
+const getAllConversations = async (containerName: string,token:string) => {
   try {
     const response = await fetch(
       getFullUrl(`/history/list?containerName=${containerName}`),
@@ -35,6 +33,7 @@ const getConversation = async (
   id: string,
   containerName: string,
   indexName: string,
+  token:string,
 ): Promise<IConversation> => {
   try {
     const response = await fetch(getFullUrl(`/history/read`), {
@@ -66,6 +65,7 @@ const getConversation = async (
 export const historyGenerate = async (
   options: IConversationRequest,
   abortSignal: AbortSignal,
+  token:string,
   convId?: string,
 ): Promise<Response> => {
   let body;
@@ -103,6 +103,7 @@ export const historyGenerate = async (
 // update messages on database
 export const historyUpdate = async (
   conversation: IConversation,
+  token:string,
 ): Promise<Response> => {
   const response = await fetch(getFullUrl(`/history/update`), {
     method: 'POST',
@@ -134,6 +135,7 @@ export const historyRename = async (
   convId: string,
   title: string,
   containerName: string,
+  token:string,
 ): Promise<Response> => {
   const response = await fetch(getFullUrl('/history/rename'), {
     method: 'POST',
@@ -167,6 +169,7 @@ export const historyRename = async (
 export const historyDelete = async (
   convId: string,
   containerName: string,
+  token:string,
 ): Promise<Response> => {
   const response = await fetch(getFullUrl('/history/delete'), {
     method: 'DELETE',
@@ -200,6 +203,7 @@ const updateMessageFeedback = async (
   messageId: string,
   feedback: string,
   containerName: string,
+  token:string,
 ) => {
   try {
     const response = await fetch(getFullUrl(`/history/message_feedback`), {

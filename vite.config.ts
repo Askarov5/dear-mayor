@@ -12,11 +12,6 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
-      '/auth': {
-        target: 'https://sts.windows.net/c58f2a91-c8b5-40a2-9ab0-ee016352f3eb', // Your backend server for Auth
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/auth/, ''),
-      },
     },
   },
 });
