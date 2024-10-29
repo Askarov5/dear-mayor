@@ -21,6 +21,10 @@ export const startMiddleware = () => {
 
     app.use(cors(corsOptions));
 
+    app.get('/', async (req, res) => {
+        await res.send('WELCOME TO DEAR MAYOR MIDDLEWARE');
+    });
+
     app.post('/oauth2/v2.0/token', async (req, res) => {
 
         if (!authUrl || !clientId || !clientSecret || !scope) {
