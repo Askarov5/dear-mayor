@@ -12,7 +12,7 @@ const grant_type = process.env.VITE_AUTH_GRANT_TYPE;
 const app = express();
 
 const corsOptions = {
-    origin: "https://dear-mayor.vercel.app/", // This should match your front end's URL
+    origin: "https://dear-mayor.vercel.app", // This should match your front end's URL
     credentials: true,
 };
 
