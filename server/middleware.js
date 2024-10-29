@@ -15,7 +15,7 @@ export const startMiddleware = () => {
     const app = express();
 
     const corsOptions = {
-        origin: "http://localhost:5173", // This should match your front end's URL
+        origin: "https://dear-mayor.vercel.app", // This should match your front end's URL
         credentials: true,
     };
 
