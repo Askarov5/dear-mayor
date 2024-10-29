@@ -1,5 +1,5 @@
 import { IChatHistory } from '../types/conversationTypes';
-import { getMonthName } from '../utils/helper';
+import { getMonthName } from './helper';
 
 type TChatHistoryItem = {
   id: string;
