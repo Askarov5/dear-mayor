@@ -37,4 +37,8 @@ export default {
       display: ['group-hover'],
     },
   },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
 };
