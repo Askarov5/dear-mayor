@@ -4,7 +4,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node ./middleware.js"
+    "start": "node ./middleware.js",
+    "build": "echo 'No build step'",
+    "vercel-build": "echo 'No build step'"
   },
   "keywords": [],
   "author": "",
