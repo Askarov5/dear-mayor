@@ -20,13 +20,17 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.get('/', async (req, res) => {
+/*  app.get('/', async (req, res) => {
+    console.info('Root Route');
     await res.send('WELCOME TO DEAR MAYOR MIDDLEWARE');
-});
+}); */
 
 app.get('/api', async (req, res) => {
+    console.info('WELCOME TO DEAR MAYOR API MIDDLEWARE');
     await res.send('WELCOME TO DEAR MAYOR API MIDDLEWARE');
 });
+
+
 
 app.post('/oauth2/v2.0/token', async (req, res) => {
 
@@ -52,7 +56,7 @@ app.post('/oauth2/v2.0/token', async (req, res) => {
 
 const PORT = process.env.PORT || 5000; // You can specify the port here
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.info(`Server is running on port ${PORT}`);
 });
 
 export default app;

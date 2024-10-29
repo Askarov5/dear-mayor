@@ -131,3 +131,10 @@ dist
 
 package-lock.json
 .vercel
+
+# ENV
+.env
+.env.local
+.env.development
+.env.test
+.env.production
