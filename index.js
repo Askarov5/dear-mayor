@@ -9,10 +9,12 @@ const clientSecret = process.env.VITE_AUTH_CLIENT_SECRET;
 const scope = process.env.VITE_AUTH_SCOPE;
 const grant_type = process.env.VITE_AUTH_GRANT_TYPE;
 
+const frontEndUrl = process.env.FRONTEND_BASE_URL;
+
 const app = express();
 
 const corsOptions = {
-    origin: "https://dear-mayor.vercel.app", // This should match your front end's URL
+    origin: frontEndUrl, // This should match your front end's URL
     credentials: true,
 };
 
@@ -23,7 +25,7 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/api', async (req, res) => {
-    await res.send('WELCOME TO DEAR MAYOR MIDDLEWARE');
+    await res.send('WELCOME TO DEAR MAYOR API MIDDLEWARE');
 });
 
 app.post('/oauth2/v2.0/token', async (req, res) => {
