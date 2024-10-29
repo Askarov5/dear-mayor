@@ -2,25 +2,18 @@
     "version": 2,
     "builds": [
       {
-        "src": "src/api/middleware.js",
+        "src": "/src/api/middleware.js",
         "use": "@vercel/node"
       },
       {
-        "src": "vite.config.js",
-        "use": "@vercel/static-build",
-        "config": {
-          "distDir": "dist"
-        }
+        "src": "/dist/*",
+        "use": "@now/static"
       }
     ],
     "routes": [
       {
-        "src": "/api/(.*)",
-        "dest": "/src/api/middleware.js"
-      },
-      {
         "src": "/(.*)",
-        "dest": "/dist/index.html"
+        "dest": "/src/api/middleware.js"
       }
     ]
   }
